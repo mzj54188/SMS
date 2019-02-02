@@ -8,7 +8,7 @@ export default new Router({
     {
       path: '/Login',
       name: 'login',
-      component: () => import('./views/Login.vue')//登录
+      component: () => import('./views/Login/Login.vue')//登录
     },
     {
       path: '/',
