@@ -131,7 +131,7 @@ export default {
 </script>
 <style lang="less">
 .login {
-  height: 1000px;
+  height: 100%;
   width: 100%;
   background-color: #2d3a4b;
   .login-wrapper {
