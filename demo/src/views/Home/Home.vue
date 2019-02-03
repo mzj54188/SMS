@@ -72,6 +72,14 @@
                                     label="库存"
                                    >
                                 </el-table-column>
+                                <el-table-column label="操作">
+                                    <template slot-scope="scope">
+                                        <el-button
+                                        size="mini"
+                                       type="text">入库</el-button>
+                                       
+                                    </template>
+                                    </el-table-column>
                                 <!-- 操作 -->
                                 <!-- <el-table-column
                                     prop="saleCount"
@@ -138,7 +146,8 @@ export default {
         }
       ]
     };
-  }
+  },
+ 
 };
 </script>
 <style lang="less">

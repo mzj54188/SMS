@@ -22,7 +22,7 @@ export default new Router({
         {
           path:'/goodsmanage',
           name:'goodsmanage',
-          conponent:()=>import('./views/GoodsManage/GoodsManage.vue')  //商品管理
+          component:()=>import('./views/GoodsManage/GoodsManage.vue') //商品管理
         },
         {
           path:'/goodsadd',
