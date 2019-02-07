@@ -1,12 +1,14 @@
 <template>
     <div class="top">
         <el-row>
+            <!-- 顶部左边标题 -->
             <el-col :span="12">
                 <div  class="title">
                     <i class="el-icon-menu"></i>
                     华联超市管理系统
                 </div>
             </el-col>
+            <!-- 顶部右边用户名和头像 -->
             <el-col :span="12">
                 <div class="top-right">
                     <el-row>
@@ -38,34 +40,44 @@ export default {
     data () {
         return {
             username: "李寻欢",
-            avatarUrl: 'http://127.0.0.1:8080/avatar.jpg'
+            // 路径有问题
+            avatarUrl: 'http:127.0.0.1:8080/avatar/lxh.jpg'
         }
     }
 }
 </script>
 <style lang="less">
     .top {
-        // background-color: red;
+        background-color: #2d3a4b;
+        color:#fff;
         border-bottom: 2px solid green;
         .title {
             text-align: left;
             font-size: 20px;
             font-weight: 900;
+            margin-left: 20px;
         }
         .top-right {
             color: #2d3a4b;
             text-align: right;
+            color: #fff;
             .username {
                font-weight: 600;
+               color: #ff6700;
             }
             .avatar {
+                background: #fff;
                 width: 52px;
                 height: 52px;
                 margin-top: 4px;
                 margin-left: 30px;
                 border-radius: 50%;
+                border: 1px solid #fff;
                 img {
+                    // background: #fff;
                     border-radius: 50%;
+                    width: 52px;
+                    height: 52px;
                 }
             }
         }
