@@ -34,7 +34,7 @@
                 <el-input v-model="goods.barcode"></el-input>
               </el-col>
               <el-col :span="6" class="btn">
-                <el-button type="success" round>生成条形码</el-button>
+                <el-button type="success" round @click="generateBarCode">生成条形码</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -139,13 +139,13 @@
           </el-form-item>
 
           <!-- 12：商品简介 -->
-          <el-form-item label="活动形式" prop="desc">
+          <el-form-item label="商品简介" prop="desc">
             <el-input type="textarea" v-model="goods.desc"></el-input>
           </el-form-item>
 
           <!-- 13：添加按钮 -->
           <el-form-item >
-            <el-button type="success" class="success">成功按钮</el-button>
+            <el-button type="success" class="success" @click="goodsAdd">添加</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -232,7 +232,15 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    }
+    },
+    // 生成条形码按钮
+    generateBarCode(){
+      alert('生成条形码')
+    },
+    // 商品添加按钮
+    goodsAdd(){
+      alert('商品添加成功')
+    },
   }
 };
 </script>
