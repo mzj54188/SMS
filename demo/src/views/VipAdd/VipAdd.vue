@@ -143,8 +143,20 @@ export default {
                 }]
             }],
             selectedOptions: [],
-            selectedOptions2: []
-        };
+            selectedOptions2: [],
+            rules: {
+                //  1:所属分类
+                name: [
+                    { required: true, message: "请输入姓名", trigger: "blur" }
+                ],
+                vipCard: [
+                    { required: true, message: "请输入会员卡卡号", trigger: "blur" }
+                ],
+                userGroup: [
+                    { required: true, message: "请选择用户组", trigger: "change" }
+                ],
+            }
+        }
     },
     methods: {
         keywordSearch() {
