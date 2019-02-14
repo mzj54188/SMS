@@ -66,6 +66,7 @@ export default {
     color: #2d3a4b;
     text-align: center;
     line-height: 60px;
+    padding: 0px;
   }
    .el-header {
        border-bottom: 1px solid #ccc;
