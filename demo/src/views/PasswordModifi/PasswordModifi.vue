@@ -6,19 +6,23 @@
             </div>
             <div class="text item">
                 <!-- 账号管理表单 -->
-                <el-form :model="passwordForm" status-icon :rules="rules" ref="passwordForm" label-width="100px" class="demo-ruleForm">
-                    <!-- 密码 -->
-                    <el-form-item label="密码" prop="password">
-                        <el-input type="text" v-model="passwordForm.password" autocomplete="off"></el-input>
+                <el-form :model="passwordModifyForm" status-icon :rules="rules" ref="passwordModifyForm" label-width="100px" class="demo-ruleForm">
+                    <!-- 原密码 -->
+                    <el-form-item label="原密码" prop="oldPassword">
+                        <el-input type="text" v-model="passwordModifyForm.oldPassword" autocomplete="off"></el-input>
                     </el-form-item>
-                    <!-- 确认密码 -->
-                    <el-form-item label="确认密码" prop="checkPwd">
-                        <el-input type="text" v-model="passwordForm.checkPwd" autocomplete="off"></el-input>
+                    <!-- 新密码 -->
+                    <el-form-item label="新密码" prop="newPassword">
+                        <el-input type="text" v-model="passwordModifyForm.newPassword" autocomplete="off"></el-input>
                     </el-form-item>
-                    <!-- 登录按钮&重置按钮 -->
+                    <!-- 确认新密码 -->
+                    <el-form-item label="确认新密码" prop="checkNewPwd">
+                        <el-input type="text" v-model="passwordModifyForm.checkNewPwd" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <!-- 修改按钮&重置按钮 -->
                     <el-form-item>
-                        <el-button type="success" @click="submitForm('passwordForm')">修改</el-button>
-                        <el-button @click="resetForm('passwordForm')">重置</el-button>
+                        <el-button type="success" @click="submitForm('passwordModifyForm')">修改</el-button>
+                        <el-button @click="resetForm('passwordModifyForm')">重置</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -26,60 +30,73 @@
     </div>
 </template>
 <script>
+import qs from 'qs';
 export default {
-    data() {
-    // 包含特殊字符的函数
-    const checkSpecificKey = str => {
-        var specialKey =
-          "[`~!#$^&*()=|{}':;',\\[\\].<>/?~！#￥……&*（）——|{}【】‘；：”“'。，、？]‘'";
-        for (var i = 0; i < str.length; i++) {
-          if (specialKey.indexOf(str.substr(i, 1)) != -1) {
-            return false;
-          }
-        }
-        return true;
-    };
-    // 验证密码的函数
+  data() {
+    
+    // 验证新密码的函数
     const pass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入密码"));
+        callback(new Error("请输入新密码"));
       } else if (value.length < 5 || value.length > 10) {
-        callback(new Error("密码长度 5 - 10 位"));
-      } else if (!checkSpecificKey(value)) {
-        callback(new Error("密码不能包含特殊字符"));
+        callback(new Error("新密码长度 5 - 10 位"));
       } else {
-        if (this.passwordForm.checkPwd !== "") {
+        if (this.passwordModifyForm.checkNewPwd !== "") {
           // 如果确认密码不为空
-          this.$refs.passwordForm.validateField("checkPwd"); // 调用确认密码的验证（一致性验证）
+          this.$refs.passwordModifyForm.validateField("checkNewPwd"); // 调用确认密码的验证（一致性验证）
         }
         // 成功回调
         callback();
       }
     };
-    // 确认密码的验证函数
+    // 确认新密码的验证函数
     const checkPass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.passwordForm.password) {
+        callback(new Error("请再次输入新密码"));
+      } else if (value !== this.passwordModifyForm.newPassword) {
         callback(new Error("输入密码不一致"));
       }
       callback();//成功调用
     };
+    // 验证原密码
+    const checkOldPwd=(rule,value,callback)=>{
+      // 获取当前登录账号
+      let username=window.localStorage.getItem("username");
+      // 把用户输入的原密码发给后端，匹配数据库中的密码是否一致
+      this.axios.get(`http://127.0.0.1:777/account/checkOldPwd?oldPwd=${value}&username=${username}`)
+      .then(response=>{
+        // 接收后端错误码 和 信息提示
+        let {error_code,reason}=response.data;
+        if(error_code===0){
+          callback();
+        }else{
+          callback(new Error(reason));
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
+    };
     return {
       // 密码修改的数据
-      passwordForm: {
-        password: "",
-        checkPwd: ""
+      passwordModifyForm: {
+        oldPassword:"",
+        newPassword:"",
+        checkNewPwd:""
       },
       // 验证的规则（一份数据）
       rules: {
-        // 验证密码
-        password: [
+        // 验证原密码
+        oldPassword: [
+          { required: true, validator: checkOldPwd, trigger: "blur" }
+        ],
+        // 验证新密码
+        newPassword: [
           // 非空验证
           { required: true, validator: pass, trigger: "blur" }
         ],
-        // 验证确认密码
-        checkPwd: [
+        // 验证确认新密码
+        checkNewPwd: [
           // 自定义验证函数
           { required: true, validator: checkPass, trigger: "blur" }
         ]
@@ -93,22 +110,38 @@ export default {
       this.$refs[formName].validate(valid => {
         // 如果所有验证通过 valid就是true
         if (valid) {
-          alert("添加成功！");
           let params = {
-            username: this.passwordForm.username,
-            password: this.passwordForm.password
+            username: window.localStorage.getItem("username"),
+            oldPassword: this.passwordModifyForm.oldPassword,
+            newPassword: this.passwordModifyForm.newPassword
           };
-          // 直接跳转到后端主页
-          this.$router.push("/");
+          // 发送到后端
+          this.axios.post("http://127.0.0.1:777/account/savenewpwd",qs.stringify(params))
+          .then(response=>{
+            // 接收后端错误码 和 信息提示
+            let {error_code,reason}=response.data;
+            if(error_code===0){
+              window.localStorage.removeItem("token");
+              this.$message({
+                type:"success",
+                message:reason
+              })
+              this.$router.push("/login")
+            }else{
+              this.$message.error(reason);
+            }
+          })
+          .catch(err=>{
+            console.log(err);
+          })
         } else {
-          alert("添加失败，请重新输入！");
           return false;
         }
       });
     },
     // 重置按钮
     resetForm(formName) {
-      // this.$refs.passwordForm.resetFields() 获取整个表单组件 调用重置方法
+      // this.$refs.passwordModifyForm.resetFields() 获取整个表单组件 调用重置方法
       this.$refs[formName].resetFields();
     }
   }

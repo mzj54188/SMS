@@ -31,6 +31,7 @@
     </div>
 </template>
 <script>
+import qs from 'qs';
 export default {
   data() {
     // 包含特殊字符的函数
@@ -108,13 +109,34 @@ export default {
       this.$refs[formName].validate(valid => {
         // 如果所有验证通过 valid就是true
         if (valid) {
-          alert("验证成功！");
           let params = {
             username: this.loginForm.username,
             password: this.loginForm.password
           };
-          // 直接跳转到后端主页
-          this.$router.push("/");
+          // 发送数据给后端
+          this.axios.post("http://127.0.0.1:777/login/checklogin",qs.stringify(params))
+          .then(response=>{
+            // 接收后端返回的数据
+            let {error_code,reason,token,username}=response.data;
+            if (error_code === 0) {
+                // 把token存在浏览器的本地存储中
+                window.localStorage.setItem('token', token);
+                window.localStorage.setItem('username', username);
+                // 弹出成功提示
+                this.$message({
+                  type: 'success',
+                  message: reason
+                })
+                // 跳转到后端首页
+                this.$router.push('/');
+              } else {
+                // 弹出失败提示
+                this.$message.error(reason);
+              }
+          })
+          .catch(err=>{
+            console.log(err);
+          })
         } else {
           alert("验证失败，请重新输入！");
           return false;

@@ -20,7 +20,7 @@
                             <el-select v-model="vaddForm.userGroup" placeholder="请选择用户组">
                                 <el-option label="普通用户" value="普通用户"></el-option>
                                 <el-option label="高级管理员" value="高级管理员"></el-option>
-                                <el-option label="高级管理员" value="超级管理员"></el-option>
+                                <el-option label="超级管理员" value="超级管理员"></el-option>
                             </el-select>
                         </el-form-item>
                         <!-- 身份证号 -->

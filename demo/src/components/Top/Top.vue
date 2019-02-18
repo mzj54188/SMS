@@ -14,13 +14,13 @@
                     <el-row>
                         <el-col :span="18">
                             欢迎您! 
-                            <el-dropdown>
+                            <el-dropdown @command="handleCommand">
                             <span class="username el-dropdown-link">
                                 {{ username }}<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item>个人中心</el-dropdown-item>
-                                <el-dropdown-item>退出</el-dropdown-item>
+                                <el-dropdown-item command="personal">个人中心</el-dropdown-item>
+                                <el-dropdown-item command="logout">退出</el-dropdown-item>
                             </el-dropdown-menu>
                             </el-dropdown>
                         </el-col>
@@ -39,18 +39,37 @@
 export default {
     data () {
         return {
-            username: "李寻欢",
+            username: "",
             // 路径有问题
-            avatarUrl: 'http:127.0.0.1:8080/avatar/lxh.jpg'
+            avatarUrl: 'http://127.0.0.1:8080/timg.jpg'
         }
+    },
+    methods:{
+        handleCommand(command){
+            if(command==="logout"){
+                // 清除token
+                window.localStorage.removeItem("token");
+                // 弹出提示
+                this.$message({
+                    type: 'success',
+                    message: '退出当前登录！'
+                })
+                setTimeout(() => {
+                    // 跳转到登录页面
+                    this.$router.push('/login')
+                }, 1000)
+            }
+        }
+    },
+    created(){
+        this.username=window.localStorage.getItem("username");
     }
 }
 </script>
 <style lang="less">
     .top {
-        background-color: #2d3a4b;
-        color:#fff;
-        border-bottom: 2px solid green;
+        background-color: #fff;
+        color:rgb(48, 65, 86);
         .title {
             text-align: left;
             font-size: 20px;
@@ -60,10 +79,9 @@ export default {
         .top-right {
             color: #2d3a4b;
             text-align: right;
-            color: #fff;
             .username {
                font-weight: 600;
-               color: #ff6700;
+               color: rgb(64, 158, 255);
             }
             .avatar {
                 background: #fff;
@@ -74,7 +92,6 @@ export default {
                 border-radius: 50%;
                 border: 1px solid #fff;
                 img {
-                    // background: #fff;
                     border-radius: 50%;
                     width: 52px;
                     height: 52px;

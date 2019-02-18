@@ -8,17 +8,22 @@
           <!-- 进货管理表单 -->
           <el-form :model="inventoryForm" status-icon :rules="rules" ref="inventoryForm" label-width="100px" class="demo-ruleForm">
               <!-- 商品条形码 -->
-              <el-form-item label="商品条形码" prop="username">
+              <el-form-item label="商品条形码" prop="barcode">
+                  <el-input type="text" v-model="inventoryForm.barcode" autocomplete="off"></el-input>
               </el-form-item>
-                  <el-input type="text" v-model="inventoryForm.username" autocomplete="off"></el-input>
+              <!-- 商品名称 -->
+              <el-form-item label="商品名称" prop="goodsname">
+                  <el-input type="text" v-model="inventoryForm.goodsname" autocomplete="off"></el-input>
+              </el-form-item>
               <!-- 数量 -->
-              <el-form-item label="数量" prop="password">
+              <el-form-item label="数量" prop="number">
+                  <el-input type="text" v-model="inventoryForm.number" autocomplete="off"></el-input>
+                  <div>记重商品单位为千克</div>
               </el-form-item>
-                  <el-input type="text" v-model="inventoryForm.password" autocomplete="off"></el-input>
               <!-- 进价 -->
-              <el-form-item label="进价" prop="checkPwd">
+              <el-form-item label="进价" prop="price">
+                  <el-input type="text" v-model="inventoryForm.price" autocomplete="off"></el-input>
               </el-form-item>
-                  <el-input type="text" v-model="inventoryForm.checkPwd" autocomplete="off"></el-input>
               <!-- 登录按钮&重置按钮 -->
               <el-form-item>
                   <el-button type="success" @click="submitForm('inventoryForm')">入库</el-button>
@@ -30,76 +35,67 @@
     </div>
 </template>
 <script>
+// 引入qs
+import qs from "qs";
 export default {
     data() {
-    // 包含特殊字符的函数
-    const checkSpecificKey = str => {
-        var specialKey =
-          "[`~!#$^&*()=|{}':;',\\[\\].<>/?~！#￥……&*（）——|{}【】‘；：”“'。，、？]‘'";
-        for (var i = 0; i < str.length; i++) {
-          if (specialKey.indexOf(str.substr(i, 1)) != -1) {
-            return false;
-          }
-        }
-        return true;
-    };
 
-    // 验证密码的函数
+    // 验证数量的函数
     const pass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入密码"));
-      } else if (value.length < 5 || value.length > 10) {
-        callback(new Error("密码长度 5 - 10 位"));
-      } else if (!checkSpecificKey(value)) {
-        callback(new Error("密码不能包含特殊字符"));
+        callback(new Error("请输入数量"));
+      } else if (value.length < 1 || value.length > 10) {
+        callback(new Error("数量为1 - 10 位"));
       } else {
-        if (this.inventoryForm.checkPwd !== "") {
-          // 如果确认密码不为空
-          this.$refs.inventoryForm.validateField("checkPwd"); // 调用确认密码的验证（一致性验证）
-        }
         // 成功回调
         callback();
       }
     };
 
-    // 确认密码的验证函数
+    // 进价的验证函数
     const checkPass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.inventoryForm.password) {
-        callback(new Error("输入密码不一致"));
+        callback(new Error("请输入进价"));
+      } else if (value.length < 1 || value.length > 10) {
+        callback(new Error("进价为1 - 10 位"));
+      } else {
+        // 成功回调
+        callback();
       }
-      callback();//成功调用
     };
+    
 
     return {
       // 表单的数据
       inventoryForm: {
-        username: "",
-        password: "",
-        checkPwd: "",
-        userGroup:""
+        barcode: "",
+        goodsname:"",
+        number: "",
+        price: ""
       },
       // 验证的规则（一份数据）
       rules: {
         // 验证用户名
-        username: [
+        barcode: [
           // 非空验证
-          { required: true, message: "请输入账号", trigger: "blur" },
-          { min: 3, max: 5, message: "账号长度在 3 - 5 位", trigger: "blur" }
+          { required: true, message: "请输入商品条形码", trigger: "blur" },
+          { min: 5, max: 7, message: "请输入5 - 7 位商品条形码", trigger: "blur" }
         ],
-        // 验证密码
-        password: [
+        // 商品名称
+        goodsname: [
+          // 非空验证
+          { required: true, message: "请输入商品名称", trigger: "blur" },
+          { min: 6, max: 6, message: "请输入6位商品名称", trigger: "blur" }
+        ],
+        // 数量
+        number: [
           // 非空验证
           { required: true, validator: pass, trigger: "blur" }
         ],
-        // 验证确认密码
-        checkPwd: [
+        // 进价
+        price: [
           // 自定义验证函数
           { required: true, validator: checkPass, trigger: "blur" }
-        ],
-        userGroup:[
-          {required:true,message: "请选择用户组", trigger: "change"}
         ]
       }
     };
@@ -111,15 +107,35 @@ export default {
       this.$refs[formName].validate(valid => {
         // 如果所有验证通过 valid就是true
         if (valid) {
-          alert("添加成功！");
           let params = {
-            username: this.inventoryForm.username,
-            password: this.inventoryForm.password
+            barcode: this.inventoryForm.barcode,
+            goodsname: this.inventoryForm.goodsname,
+            number: this.inventoryForm.number,
+            price: this.inventoryForm.price
           };
-          // 直接跳转到后端主页
-          this.$router.push("/");
+          // 发送数据给后台
+          this.axios.post("http://127.0.0.1:777/stock/inventoryadd",qs.stringify(params))
+          .then(response=>{
+            console.log(response.data);
+            // 接收后端返回的错误码 和 提示信息
+            let {error_code,reason}=response.data;
+            if(error_code===0){
+              // 弹出成功提示
+              this.$message({
+                type:"success",
+                message:reason
+              })
+              // 跳转到库存管理
+              this.$router.push("/inventorymanage")
+            }else{
+              // 弹出失败提示
+              this.$message.error(reason);
+            }
+          })
+          .catch(err=>{
+            console.log(err);
+          })
         } else {
-          alert("添加失败，请重新输入！");
           return false;
         }
       });

@@ -20,11 +20,11 @@
                   <el-input type="text" v-model="accountForm.checkPwd" autocomplete="off"></el-input>
               </el-form-item>
               <!-- 选择用户组 -->
-              <el-form-item label="选择用户组" prop="userGroup">
-                  <el-select v-model="accountForm.userGroup" placeholder="请选择用户组">
+              <el-form-item label="选择用户组" prop="usergroup">
+                  <el-select v-model="accountForm.usergroup" placeholder="请选择用户组">
                     <el-option label="普通用户" value="普通用户"></el-option>
                     <el-option label="高级管理员" value="高级管理员"></el-option>
-                    <el-option label="高级管理员" value="超级管理员"></el-option>
+                    <el-option label="超级管理员" value="超级管理员"></el-option>
                   </el-select>
               </el-form-item>
               <!-- 登录按钮&重置按钮 -->
@@ -38,6 +38,9 @@
     </div>
 </template>
 <script>
+// 引入qs
+import qs from "qs";
+
 export default {
   data() {
     // 包含特殊字符的函数
@@ -86,7 +89,7 @@ export default {
         username: "",
         password: "",
         checkPwd: "",
-        userGroup:""
+        usergroup:""
       },
       // 验证的规则（一份数据）
       rules: {
@@ -106,7 +109,7 @@ export default {
           // 自定义验证函数
           { required: true, validator: checkPass, trigger: "blur" }
         ],
-        userGroup:[
+        usergroup:[
           {required:true,message: "请选择用户组", trigger: "change"}
         ]
       }
@@ -119,15 +122,34 @@ export default {
       this.$refs[formName].validate(valid => {
         // 如果所有验证通过 valid就是true
         if (valid) {
-          alert("添加成功！");
           let params = {
             username: this.accountForm.username,
-            password: this.accountForm.password
+            password: this.accountForm.password,
+            usergroup: this.accountForm.usergroup,
           };
-          // 直接跳转到后端主页
-          this.$router.push("/");
+          // axios发送数据给后台
+          this.axios.post("http://127.0.0.1:777/account/accountadd",qs.stringify(params))
+            .then(response=>{
+              console.log(response.data);
+              // 接收后端返回的错误码 和 提示信息
+              let {error_code,reason}=response.data;
+              if(error_code===0){
+                // 弹出成功提示
+                this.$message({
+                  type: 'success',
+                  message: reason
+                });
+                //跳转到账号管理
+                this.$router.push("/accountmanage")
+              }else{
+                // 弹出失败提示
+                this.$message.error(reason);
+              }
+            })
+            .catch(err=>{
+              console.log(err);
+            })
         } else {
-          alert("添加失败，请重新输入！");
           return false;
         }
       });

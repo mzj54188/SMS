@@ -24,7 +24,7 @@
             <!--  -->
             <el-form-item>
               <span>（商品名称；条形码）</span>
-              <el-button type="primary" @click="keywordSearch">查询</el-button>
+              <el-button type="success" @click="keywordSearch">查询</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -57,7 +57,7 @@
         </div>
         <!-- 分页效果 -->
         <div class="goodsPagination">
-          <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+          <el-pagination background layout="prev, pager, next" :total="20"></el-pagination>
         </div>
       </div>
     </el-card>

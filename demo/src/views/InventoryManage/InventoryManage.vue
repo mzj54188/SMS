@@ -30,17 +30,27 @@
                 <!-- 商品列表 -->
                 <div class="goodsList">
                     <el-table :data="tableData" stripe style="width: 100%">
-                        <el-table-column prop="goodsBarCode" label="商品条形码"></el-table-column>
-                        <el-table-column prop="goodsName" label="商品名称"></el-table-column>
-                        <el-table-column prop="goodsCategory" label="进价"></el-table-column>
-                        <el-table-column prop="goodsPrice" label="入库"></el-table-column>
-                        <el-table-column prop="goodsPromotedPrice" label="库存"></el-table-column>
-                        <el-table-column prop="goodsMarketPrice" label="已售"></el-table-column>
+                        <!-- 单选框 -->
+                        <el-table-column
+                        type="selection"
+                        width="55">
+                        </el-table-column>
+                        <el-table-column prop="barcode" label="商品条形码"></el-table-column>
+                        <el-table-column prop="goodsname" label="商品名称"></el-table-column>
+                        <el-table-column prop="number" label="数量"></el-table-column>
+                        <el-table-column prop="price" label="进价"></el-table-column>
+                        <!-- 日期 -->
+                        <el-table-column label="创建日期">
+                            <template slot-scope="scope">{{ scope.row.ctime | filterCtime }}</template>
+                        </el-table-column>
                         <!-- 管理 -->
-                        <el-table-column fixed="right" label="管理" width="100">
+                        <el-table-column fixed="right" label="管理">
                             <template slot-scope="scope">
-                                <el-button type="text" size="small">
-                                <i class="el-icon-delete" @click="goodsDelete"></i>
+                                <el-button type="primary" size="mini">
+                                    <i class="el-icon-edit" @click="goodsEdit"></i> 编辑
+                                </el-button>
+                                <el-button type="danger" size="mini">
+                                    <i class="el-icon-delete" @click="goodsDelete"></i> 删除
                                 </el-button>
                             </template>
                         </el-table-column>
@@ -55,66 +65,57 @@
     </div>
 </template>
 <script>
+// 引入moment模块
+import moment from 'moment';
+import qs from 'qs';
 export default {
     data() {
         return {
-        //   下拉框  ======选择分类
-        inventoryForm: {
-            user: "",
-            region: ""
-        },
-        //   商品列表中的数据
-        tableData: [
-            {
-                goodsBarCode: "6911989262550",
-                goodsName: "海飞丝去屑洗发水",
-                goodsCategory: "7.00",
-                goodsPrice: "10",
-                goodsPromotedPrice: "5",
-                goodsMarketPrice: "5"
+            //   下拉框  ======选择分类
+            inventoryForm: {
+                user: "",
+                region: ""
             },
-            {
-                goodsBarCode: "6911989262549",
-                goodsName: "茅台酒",
-                goodsCategory: "150.00",
-                goodsPrice: "10",
-                goodsPromotedPrice: "6",
-                goodsMarketPrice: "4"
-            },
-            {
-                goodsBarCode: "6911989262549",
-                goodsName: "龙凤呈祥2",
-                goodsCategory: "1.33",
-                goodsPrice: "10",
-                goodsPromotedPrice: "10",
-                goodsMarketPrice: "0"
-            },
-            {
-                goodsBarCode: "6911989262549",
-                goodsName: "龙凤呈祥",
-                goodsCategory: "8.16",
-                goodsPrice: "2",
-                goodsPromotedPrice: "2",
-                goodsMarketPrice: "0"
-            }
-        ]
+            //   商品列表中的数据
+            tableData: []
         };
     },
+    created(){
+        this.getInventoryList();
+    },
     methods: {
-        //   通过关键字查询
+        // 数据函数
+        getInventoryList(){
+            this.axios.get("http://127.0.0.1:777/stock/stocklist")
+            .then(response=>{
+                // 把后端返回的数据赋值给表格
+                this.tableData=response.data;
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+        },
+        // 通过关键字查询
         keywordSearch() {
-        alert("关键字查询!");
+            alert("关键字查询!");
         },
         // 商品列表====
         // 编辑商品
         goodsEdit() {
-        alert("编辑商品");
+            alert("编辑商品");
         },
         // 删除商品
         goodsDelete() {
-        alert("删除商品");
+            alert("删除商品");
         },
         // 分页效果
+    },
+    // 过滤器
+    filters:{
+        // 过滤时间函数
+        filterCtime(ctime){
+            return moment(ctime).format("YYYY-MM-DD HH:mm:ss");
+        }
     }
 };
 </script>
