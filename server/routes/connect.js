@@ -4,7 +4,7 @@ const mysql = require('mysql');
 const connection=mysql.createConnection({
     host:'localhost',//数据库地址
     user:'root',
-    password:'root',
+    password:'ROOT',
     database:'sms'
 });
 // 执行连接

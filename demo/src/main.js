@@ -1,6 +1,6 @@
 import Vue from 'vue'
 // 引入axios
-import axios from 'axios'
+// import axios from 'axios'
 
 // 引入element-ui的组件和样式
 import ElementUI from "element-ui";
@@ -18,6 +18,8 @@ import '@/styles/common.less';
 // 注册elementui
 Vue.use(ElementUI);
 
+// 引入axios（req）组件
+import axios from '@/api/axios(req)'
 //把axios挂在vue的原型上
 Vue.prototype.axios = axios;
 
