@@ -70,7 +70,7 @@ router.get('/accountlistbypage', (req, res) => {
         })
       })
     })
-  })
+})
 
 //删除账号
 router.get("/accountdel",(req,res)=>{
