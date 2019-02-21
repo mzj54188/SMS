@@ -63,10 +63,10 @@ export default {
       // 获取当前登录账号
       let username=window.localStorage.getItem("username");
       // 把用户输入的原密码发给后端，匹配数据库中的密码是否一致
-      this.axios.get(`http://127.0.0.1:777/account/checkOldPwd?oldPwd=${value}&username=${username}`)
+      this.axios.get(`/account/checkOldPwd?oldPwd=${value}&username=${username}`)
       .then(response=>{
         // 接收后端错误码 和 信息提示
-        let {error_code,reason}=response.data;
+        let {error_code,reason}=response;
         if(error_code===0){
           callback();
         }else{
@@ -116,10 +116,10 @@ export default {
             newPassword: this.passwordModifyForm.newPassword
           };
           // 发送到后端
-          this.axios.post("http://127.0.0.1:777/account/savenewpwd",qs.stringify(params))
+          this.axios.post("/account/savenewpwd",params)
           .then(response=>{
             // 接收后端错误码 和 信息提示
-            let {error_code,reason}=response.data;
+            let {error_code,reason}=response;
             if(error_code===0){
               window.localStorage.removeItem("token");
               this.$message({

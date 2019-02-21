@@ -128,11 +128,11 @@ export default {
             usergroup: this.accountForm.usergroup,
           };
           // axios发送数据给后台
-          this.axios.post("http://127.0.0.1:777/account/accountadd",qs.stringify(params))
+          this.axios.post("/account/accountadd",params)
             .then(response=>{
-              console.log(response.data);
+              console.log(response);
               // 接收后端返回的错误码 和 提示信息
-              let {error_code,reason}=response.data;
+              let {error_code,reason}=response;
               if(error_code===0){
                 // 弹出成功提示
                 this.$message({

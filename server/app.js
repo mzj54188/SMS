@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var accountRouter = require('./routes/account');
 var loginRouter = require('./routes/login');
 var stockRouter = require('./routes/stock');
+var goodsRouter = require('./routes/goods');     //商品路由
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use('/users', usersRouter);
 app.use('/account', accountRouter);
 app.use('/login', loginRouter);
 app.use('/stock', stockRouter);
+app.use('/goods', goodsRouter);     //商品路由
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -144,17 +144,17 @@ export default {
             // 收集当前页码 和 每页显示条数
             let pageSize = this.pageSize;
             let currentPage = this.currentPage;
-            // 发送ajax请求 把分页数据发送给后端
-            this.axios.get('http://127.0.0.1:777/stock/stocklistbypage', {
-                params: {
-                pageSize,
+            let params = {
+                 pageSize,
                 currentPage
-                }
-            })
+            };
+            // 发送ajax请求 把分页数据发送给后端
+            this.axios.get('/stock/stocklistbypage',
+                params)
             .then(response => {
-                console.log('对应页码的数据:', response.data)
+                console.log('对应页码的数据:', response)
                 // 接收后端返回的数据总条数 total 和 对应页码的数据 data
-                let {total, data} = response.data;
+                let {total, data} = response;
                 // 赋值给对应的变量即可
                 this.total = total;
                 this.tableData = data;
@@ -195,9 +195,9 @@ export default {
             // 显示模态框
             this.flag=true;
             // id发给后端
-            this.axios.get(`http://127.0.0.1:777/stock/inventoryedit?id=${id}`)
+            this.axios.get(`/stock/inventoryedit`,{id})
             .then(response=>{
-                let result=response.data[0];
+                let result=response[0];
                 // 回填表单
                 this.editForm.barcode=result.barcode;
                 this.editForm.goodsname=result.goodsname;
@@ -218,10 +218,10 @@ export default {
                 type: 'warning'
             })
             .then(()=>{
-                this.axios.get(`http://127.0.0.1:777/stock/inventorydel?id=${id}`)
+                this.axios.get(`/stock/inventorydel`,{id})
                 .then(response=>{
                     // 接收后端返回的错误码 和 提示信息
-                    let {error_code,reason}=response.data;
+                    let {error_code,reason}=response;
                     if(error_code===0){
                         // 删除成功的提示
                         this.$message({
@@ -256,9 +256,9 @@ export default {
                 editId:this.editId
             }
             // 把新数据 和 原来的id 发送给后端
-            this.axios.post("http://127.0.0.1:777/stock/inventoryeditsave",qs.stringify(params))
+            this.axios.post("/stock/inventoryeditsave",params)
             .then(response=>{
-                let {error_code,reason}=response.data;
+                let {error_code,reason}=response;
                 if(error_code === 0){
                     // 弹出成功的提示
                     this.$message({

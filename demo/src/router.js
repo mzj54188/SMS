@@ -30,6 +30,11 @@ export default new Router({
           component:()=>import('./views/GoodsAdd/GoodsAdd.vue')  //添加商品
         },
         {
+          path:'/goodsedit',
+          name:'goodsedit',
+          component:()=>import('./views/GoodsEdit/GoodsEdit.vue')  //=====编辑商品
+        },
+        {
           path:'/inventorymanage',
           name:'inventorymanage',
           component:()=>import('./views/InventoryManage/InventoryManage.vue')  //库存管理

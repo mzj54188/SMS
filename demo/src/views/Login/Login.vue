@@ -114,10 +114,10 @@ export default {
             password: this.loginForm.password
           };
           // 发送数据给后端
-          this.axios.post("http://127.0.0.1:777/login/checklogin",qs.stringify(params))
+          this.axios.post("/login/checklogin",params)
           .then(response=>{
             // 接收后端返回的数据
-            let {error_code,reason,token,username}=response.data;
+            let {error_code,reason,token,username}=response;
             if (error_code === 0) {
                 // 把token存在浏览器的本地存储中
                 window.localStorage.setItem('token', token);
